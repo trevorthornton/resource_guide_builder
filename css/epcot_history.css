@@ -1,0 +1,32 @@
+body, .button {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+.button {
+  text-transform: uppercase;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  font-family: 'Roboto Condensed', sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+header {
+  background: #3898D8;
+  padding: 1rem;
+  color: #fff;
+}
+
+main {
+  margin: 1rem 0;
+}
+
+#project-name {
+  font-weight: bold;
+  font-size: 2.5rem;
+}
+
+#project-description {
+  font-size: 1.5rem;
+}
