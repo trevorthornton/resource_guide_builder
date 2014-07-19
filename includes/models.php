@@ -17,8 +17,12 @@
   }
 
 
-  function get_records($table, $options=[]) {
+  function get_records($table, $options=[], $connection=null) {
     
+    if (!$connection) {
+      $connection = db_connection();
+    }
+
     // SELECT
     $q_select = "SELECT * FROM $table";
 
@@ -43,19 +47,67 @@
       $q_order = "ORDER BY " . $options['order'];
     }
 
-    $q_clauses = [$q_select, $q_where, $q_limit, $q_order];
+    $q_clauses = [$q_select, $q_where, $q_order, $q_limit];
     $query = implode(' ', $q_clauses);
 
-    $connection = db_connection();
     $records = [];
-    if ($result = $connection->query($query)) {
+
+    if ($result = execute_query($query, $connection)) {
       while ($row = $result->fetch_assoc()) {
-        $records[] = $row;
+        $records[$row['id']] = $row;
       }
       $result->free();
     }
-    mysqli_close($connection);
+
     return $records;
+  }
+
+
+  function execute_query($query, $connection=null) {
+    if (!$connection) {
+      $connection = db_connection();
+    }
+    $result = $connection->query($query);
+    
+    return $result;
+  }
+
+
+  // Get resources + associated records
+  function get_resources($options=[], $connection=null) {
+    
+    if (!$connection) {
+      $connection = db_connection();
+    }
+    
+    $resources = get_records('resources', $options, $connection);
+    
+    $resource_ids = [];
+    foreach ($resources as $r) {
+      $resource_ids[] = $r['id'];
+    }
+    $id_list = implode(',',$resource_ids);
+
+    // Get subjects
+    $subject_query = "SELECT rs.resource_id, s.*
+      FROM resources_subjects rs
+      JOIN subjects s on rs.subject_id = s.id
+      WHERE rs.resource_id IN ($id_list)
+      ORDER BY rs.resource_id";
+    if ($subject_result = execute_query($subject_query, $connection)) {
+      while ($row = $subject_result->fetch_assoc()) {
+        $subject = $row;
+        $resource_id = array_shift($subject);
+
+        if (!isset($resources[$resource_id]['subjects'])) {
+          $resources[$resource_id]['subjects'] = [];
+        }
+        $resources[$resource_id]['subjects'][] = $subject;
+      }
+      $subject_result->free();
+    }
+    mysqli_close($connection);
+    return $resources;
   }
 
 
@@ -68,9 +120,6 @@
   function insert_record($table, $attributes) {
     $connection = db_connection();
     $attributes = clean_attributes($table, $attributes, $connection);
-
-
-
     $fields = array_keys($attributes);
     $query = "INSERT INTO $table (" . implode(',',$fields) . ") VALUES (";
 
@@ -87,20 +136,15 @@
       $query .= ($value != $last) ? ',' : '';
     }
     $query .= ")";
-
-
-    // $result = $connection->query($query);
-    // var_dump($connection->error_list);
-    // mysqli_close($connection);
     
-    echo $query;
-
-
-
-    return TRUE;
-    // return $result;
+    // Execute query
+    $result = $connection->query($query);    
+    mysqli_close($connection);
+    return $result;
   }
 
+
+  // Helpers
 
   function verify_unique($table,$attributes) {
     $unique_attributes = [

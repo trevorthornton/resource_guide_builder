@@ -1,6 +1,14 @@
-body, .button {
+body {
+  background-image:url('../images/epcot_bkg.png');
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-position: center 100px;
+}
+
+body * {
   font-family: 'Roboto Condensed', sans-serif;
 }
+
 
 .button {
   text-transform: uppercase;
@@ -29,4 +37,12 @@ main {
 
 #project-description {
   font-size: 1.5rem;
+}
+
+table {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+table tr.even, table tr.alt, table tr:nth-of-type(even), table thead {
+  background: rgba(220,220,245,0.2);
 }
