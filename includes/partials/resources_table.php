@@ -2,7 +2,7 @@
   <thead>
     <tr>
       <th>Title</th>
-      <th>Publisher</th>
+      <th>Source</th>
       <th>Author</th>
       <th>Subject</th>
       <?php if (isset($admin)) {
