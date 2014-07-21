@@ -15,8 +15,9 @@
 
 <header>
   <div class="row">
-    <div id="project-name">PROJECT Name</div>
+    <div id="project-name"><?php echo $project_name; ?></div>
     <div id="project-description">A compendium of scholarship and sources</div>
+    <a href="/" class="home"></a>
   </div>
 </header>
 

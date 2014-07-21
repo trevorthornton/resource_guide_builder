@@ -1,8 +1,8 @@
 <?php
-
+include '../includes/common.php';
 $page_title = 'EPCOT History | Admin | Add Subject';
 include '../includes/partials/top.php';
-include '../includes/models.php';
+include '../includes/partials/admin_nav.php';
 
 if (isset ($_POST['add'])) {
   $attributes = $_POST['subject'];

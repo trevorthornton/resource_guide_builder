@@ -1,8 +1,5 @@
 <?php
 
-  // Include config file, which should be located somewhere safe
-  include '../../../tt/config/epcot_history_config.php';
-
   function db_connection() {
     
     global $db_host, $db_user, $db_password, $db_name;

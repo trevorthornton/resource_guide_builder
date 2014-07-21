@@ -1,14 +1,12 @@
 <?php
-
-$page_title = 'EPCOT History | Admin | Add Resource';
+include '../includes/common.php';
+$page_title = $project_name . ' | Admin | Add Resource';
 include '../includes/partials/top.php';
-include '../includes/models.php';
+include '../includes/partials/admin_nav.php';
 
 if (isset ($_POST['add'])):
   $attributes = $_POST['resource'];
   
-  $attributes['slug'] = slugify($attributes['title']);
-  var_dump($attributes);
   
 else:
 

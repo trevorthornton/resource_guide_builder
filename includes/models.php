@@ -1,8 +1,22 @@
 <?php
   
-  include 'db_connect.php';
-
   function get_record_by_id($table, $id) {
+    $valid_attributes = valid_attributes($table);
+
+    $query = "SELECT * FROM $table WHERE id = $id LIMIT 1";
+    $connection = db_connection();
+    if ($result = $connection->query($query)) {
+      /* fetch associative array */
+      $row = $result->fetch_assoc();
+      /* free result set */
+      $result->free();
+    }
+    mysqli_close($connection);
+    return $row;
+  }
+
+
+  function get_record_by_attribute($table, $attribute, $value) {
     $id = intval($id);
     $query = "SELECT * FROM $table WHERE id = $id LIMIT 1";
     $connection = db_connection();
@@ -23,8 +37,27 @@
       $connection = db_connection();
     }
 
+    $fields = array_keys(valid_attributes($table));
+
     // SELECT
-    $q_select = "SELECT * FROM $table";
+    $q_select = "SELECT $table.id";
+    foreach ($fields as $field) {
+      $q_select .= ", $table.$field AS $field";
+    }
+
+    $q_from = "FROM $table";
+
+    // ADD JOINS FOR n-TO-1 ASSOCIATIONS
+    $q_join = '';
+    switch ($table) {
+      case 'resources':
+        $q_join = 'LEFT JOIN publishers on resources.publisher_id = publishers.id';
+        $publisher_fields = array_keys(valid_attributes('publishers'));
+        foreach ($publisher_fields as $field) {
+          $q_select .= ", publishers.$field";
+        }
+    }
+    
 
     // LIMIT
     $offset = isset($options['offset']) ? intval($options['offset']) : 0;
@@ -34,11 +67,7 @@
     // WHERE
     $q_where = '';
     if (isset($options['where'])) {
-      $q_where_parts = [];
-      foreach ($options['where'] as $key => $value) {
-        $q_where_parts[] = "$key = $value";
-      }
-      $q_where .= 'WHERE ' . implode(' AND ', $q_where_parts);
+      $q_where .= 'WHERE ' . $options['where'];
     }
 
     // ORDER BY
@@ -47,7 +76,7 @@
       $q_order = "ORDER BY " . $options['order'];
     }
 
-    $q_clauses = [$q_select, $q_where, $q_order, $q_limit];
+    $q_clauses = [$q_select, $q_from, $q_join, $q_where, $q_order, $q_limit];
     $query = implode(' ', $q_clauses);
 
     $records = [];
@@ -60,8 +89,17 @@
     }
 
     return $records;
+
   }
 
+
+  // function concat_filters($table, $filters) {
+  //   $q_where_parts = [];
+  //   foreach ($filters as $key => $value) {
+  //     $q_where_parts[] = "$key = $value";
+  //   }
+  //   $q_where .= 'WHERE ' . implode(' AND ', $q_where_parts);
+  // }
 
   function execute_query($query, $connection=null) {
     if (!$connection) {
@@ -81,31 +119,43 @@
     }
     
     $resources = get_records('resources', $options, $connection);
-    
+
     $resource_ids = [];
     foreach ($resources as $r) {
       $resource_ids[] = $r['id'];
     }
     $id_list = implode(',',$resource_ids);
 
-    // Get subjects
-    $subject_query = "SELECT rs.resource_id, s.*
-      FROM resources_subjects rs
-      JOIN subjects s on rs.subject_id = s.id
-      WHERE rs.resource_id IN ($id_list)
-      ORDER BY rs.resource_id";
-    if ($subject_result = execute_query($subject_query, $connection)) {
-      while ($row = $subject_result->fetch_assoc()) {
-        $subject = $row;
-        $resource_id = array_shift($subject);
+    // Get n-to-n associations
+    $association_queries = [
+      'subjects' => "SELECT rs.resource_id, s.*
+        FROM resources_subjects rs
+        JOIN subjects s on rs.subject_id = s.id
+        WHERE rs.resource_id IN ($id_list)
+        ORDER BY rs.resource_id",
+      'creators' => "SELECT rc.resource_id, c.*
+        FROM resources_creators rc
+        JOIN creators c on rc.creator_id = c.id
+        WHERE rc.resource_id IN ($id_list)
+        ORDER BY rs.resource_id"
+    ];
+    
+    foreach ($association_queries AS $table => $query) {
 
-        if (!isset($resources[$resource_id]['subjects'])) {
-          $resources[$resource_id]['subjects'] = [];
+      if ($result = execute_query($query, $connection)) {
+        while ($row = $result->fetch_assoc()) {
+          $record = $row;
+          $resource_id = array_shift($record);
+          if (!isset($resources[$resource_id][$table])) {
+            $resources[$resource_id][$table] = [];
+          }
+          $resources[$resource_id][$table][] = $record;
         }
-        $resources[$resource_id]['subjects'][] = $subject;
+        $result->free();
       }
-      $subject_result->free();
+
     }
+
     mysqli_close($connection);
     return $resources;
   }
@@ -153,6 +203,7 @@
       'publishers' => ['slug'],
       'creators' => ['slug']
     ];
+    
   }
 
 
@@ -212,19 +263,29 @@
         continue;
       }
       else {
-        if ($valid_attributes[$key] == 'string') {
-          $new_val = $connection->real_escape_string($value);
-          $clean_attributes[$key] = $new_val;
-        }
-        else {
-          $clean_attributes[$key] = intval($value);
-        }
+        $clean_attributes[$key] = clean_attribute_value($value, $valid_attributes[$key], $connection);
+        // if ($valid_attributes[$key] == 'string') {
+        //   $new_val = $connection->real_escape_string($value);
+        //   $clean_attributes[$key] = $new_val;
+        // }
+        // else {
+        //   $clean_attributes[$key] = intval($value);
+        // }
       }
     }
     return $clean_attributes;
   }
 
 
+  function clean_attribute_value($value, $type, $connection) {
+    if ($type == 'string') {
+      $new_val = $connection->real_escape_string($value);
+    }
+    else {
+      $new_val = intval($value);
+    }
+    return $new_val;
+  }
 
 
   // class Resource
