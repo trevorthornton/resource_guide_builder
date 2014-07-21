@@ -11,7 +11,7 @@ if (isset ($_POST['add'])):
 else:
 
   $resource_types = get_records('resource_types');
-  $publishers = get_records('publishers');
+  $sources = get_records('sources');
 ?>
 
 
@@ -62,8 +62,8 @@ else:
 
       <div class="row">
         <div class="small-6 columns">
-          <label>Publisher</label>
-          <select name="resource[publisher_id]">
+          <label>source</label>
+          <select name="resource[source_id]">
             <option></option>
             <option value="husker">Husker</option>
             <option value="starbuck">Starbuck</option>
@@ -73,8 +73,8 @@ else:
         </div>
         
         <div class="small-6 columns">
-          <label>Add publisher</label>
-          <input type="text" placeholder="Name of publisher to add..." name="resource[publisher_new]" />
+          <label>Add source</label>
+          <input type="text" placeholder="Name of source to add..." name="resource[source_new]" />
         </div>
 
       </div>

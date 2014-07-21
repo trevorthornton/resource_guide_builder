@@ -51,10 +51,10 @@
     $q_join = '';
     switch ($table) {
       case 'resources':
-        $q_join = 'LEFT JOIN publishers on resources.publisher_id = publishers.id';
-        $publisher_fields = array_keys(valid_attributes('publishers'));
-        foreach ($publisher_fields as $field) {
-          $q_select .= ", publishers.$field";
+        $q_join = 'LEFT JOIN sources on resources.source_id = sources.id';
+        $source_fields = array_keys(valid_attributes('sources'));
+        foreach ($source_fields as $field) {
+          $q_select .= ", sources.$field";
         }
     }
     
@@ -200,7 +200,7 @@
     $unique_attributes = [
       'resources' => ['url','isbn','issn'],
       'subjects' => ['slug'],
-      'publishers' => ['slug'],
+      'sources' => ['slug'],
       'creators' => ['slug']
     ];
     
@@ -232,7 +232,7 @@
         'title' => 'string',
         'url' => 'string',
         'description' => 'string',
-        'publisher_id' => 'integer',
+        'source_id' => 'integer',
         'resource_type_id' => 'integer',
         'isbn' => 'string',
         'issn' => 'string'
@@ -240,7 +240,7 @@
       'creators' => [
         'name' => 'string'
       ],
-      'publishers' => [],
+      'sources' => [],
       'subjects' => [
         'label' => 'string',
         'wikipedia_uri' => 'string',
