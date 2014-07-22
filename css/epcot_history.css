@@ -54,6 +54,7 @@ main {
 
 table {
   background: transparent;
+  margin: 1rem 0;
 }
 
 table tr.even, table tr.alt, table tr:nth-of-type(even), table thead {
@@ -62,4 +63,24 @@ table tr.even, table tr.alt, table tr:nth-of-type(even), table thead {
 
 .admin-nav.inline-list > li > a {
   display: inline;
+}
+
+form .scrollable {
+  max-height: 10rem;
+  overflow: auto;
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+}
+
+form .scrollable .row {
+  margin: 0;
+}
+
+form .scrollable input[type="checkbox"] {
+  margin-bottom: 0;
+}
+
+form .scrollable [class*="block-grid-"] > li {
+    padding: 0 0.5rem;
 }

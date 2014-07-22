@@ -31,6 +31,62 @@
   }
 
 
+  function insert_record($table, $attributes) {
+    $connection = db_connection();
+    $attributes = clean_attributes($table, $attributes, $connection);
+    $fields = array_keys($attributes);
+    $query = "INSERT INTO $table (" . implode(',',$fields) . ") VALUES (";
+
+    // Build values list
+    $field_types = valid_attributes($table);
+    $last = end($attributes);
+    foreach ($attributes as $key => $value) {
+      if ($field_types[$key] == 'string') {
+        $query .= "'$value'";
+      }
+      else {
+        $query .= $value;
+      }
+      $query .= ($value != $last) ? ',' : '';
+    }
+    $query .= ")";
+    
+    // Execute query
+    $result = $connection->query($query);    
+    mysqli_close($connection);
+    return $result;
+  }
+
+
+  function update_record($table, $id, $attributes, $connection=null) {
+    if (!$connection) {
+      $connection = db_connection();
+    }
+    $attributes = clean_attributes($table, $attributes, $connection);
+    $fields = array_keys($attributes);
+    $query = "UPDATE $table SET ";
+
+    // Build values list
+    $field_types = valid_attributes($table);
+    $last = end($attributes);
+    foreach ($attributes as $key => $value) {
+      if ($field_types[$key] == 'string') {
+        $query .= "$key = '$value'";
+      }
+      else {
+        $query .= "$key = '$value'";
+      }
+      $query .= ($value != $last) ? ',' : '';
+    }
+    $query .= " WHERE id=$id";
+    
+    // Execute query
+    $result = $connection->query($query);    
+    mysqli_close($connection);
+    return $result;
+  }
+
+
   function get_records($table, $options=[], $connection=null) {
     
     if (!$connection) {
@@ -93,13 +149,6 @@
   }
 
 
-  // function concat_filters($table, $filters) {
-  //   $q_where_parts = [];
-  //   foreach ($filters as $key => $value) {
-  //     $q_where_parts[] = "$key = $value";
-  //   }
-  //   $q_where .= 'WHERE ' . implode(' AND ', $q_where_parts);
-  // }
 
   function execute_query($query, $connection=null) {
     if (!$connection) {
@@ -108,6 +157,24 @@
     $result = $connection->query($query);
     
     return $result;
+  }
+
+
+  function resource_subject_ids($resource_id, $connection=null) {
+    $query = "SELECT subject_id FROM resources_subjects WHERE resource_id = $resource_id";
+    $result = execute_query($query, $connection);
+    $subject_ids = [];
+    foreach ($result as $row) {
+      $subject_ids[] = intval($row['subject_id']);
+    }
+    return $subject_ids;
+  }
+
+
+  function remove_resource_subjects($resource_id, $subject_ids, $connection=null) {
+    $query = "DELETE FROM resources_subjects WHERE resource_id = $resource_id AND subject_id IN (";
+    $query .= implode(',',$subject_ids) . ')';
+    return execute_query($query, $connection);
   }
 
 
@@ -132,11 +199,6 @@
         FROM resources_subjects rs
         JOIN subjects s on rs.subject_id = s.id
         WHERE rs.resource_id IN ($id_list)
-        ORDER BY rs.resource_id",
-      'creators' => "SELECT rc.resource_id, c.*
-        FROM resources_creators rc
-        JOIN creators c on rc.creator_id = c.id
-        WHERE rc.resource_id IN ($id_list)
         ORDER BY rs.resource_id"
     ];
     
@@ -163,33 +225,6 @@
 
   function create_resource($attributes) {
     $result = insert_record('resources', $attributes);
-    return $result;
-  }
-
-
-  function insert_record($table, $attributes) {
-    $connection = db_connection();
-    $attributes = clean_attributes($table, $attributes, $connection);
-    $fields = array_keys($attributes);
-    $query = "INSERT INTO $table (" . implode(',',$fields) . ") VALUES (";
-
-    // Build values list
-    $field_types = valid_attributes($table);
-    $last = end($attributes);
-    foreach ($attributes as $key => $value) {
-      if ($field_types[$key] == 'string') {
-        $query .= "'$value'";
-      }
-      else {
-        $query .= $value;
-      }
-      $query .= ($value != $last) ? ',' : '';
-    }
-    $query .= ")";
-    
-    // Execute query
-    $result = $connection->query($query);    
-    mysqli_close($connection);
     return $result;
   }
 
@@ -231,22 +266,30 @@
       'resources' => [
         'title' => 'string',
         'url' => 'string',
+        'creator' => 'string',
         'description' => 'string',
+        'publication_info' => 'string',
         'source_id' => 'integer',
-        'resource_type_id' => 'integer',
-        'isbn' => 'string',
-        'issn' => 'string'
+        'resource_type_id' => 'integer'
       ],
-      'creators' => [
-        'name' => 'string'
+      'sources' => [
+        'name' => 'string',
+        'url' => 'string',
+        'slug' => 'string'
       ],
-      'sources' => [],
       'subjects' => [
         'label' => 'string',
         'wikipedia_uri' => 'string',
         'slug' => 'string'
       ],
-      'resource_types' => []
+      'resource_types' => [
+        'name' => 'string',
+        'slug' => 'string'
+      ],
+      'resources_subjects' => [
+        'resource_id' => 'integer',
+        'subject_id' => 'integer'
+      ]
     ];
     return $attributes[$table];
   }

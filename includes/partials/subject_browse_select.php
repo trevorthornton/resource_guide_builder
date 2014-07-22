@@ -1,5 +1,5 @@
 <?php
-  $subjects = get_records('subjects');
+  $subjects = get_records('subjects', ['order' => 'label ASC']);
 ?>
 
 <a href="#" data-dropdown="drop2"><i class="fa fa-th"></i> Browse subjects</a>

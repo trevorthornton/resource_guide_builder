@@ -1,4 +1,4 @@
-<table>
+<table class="resources-table">
   <thead>
     <tr>
       <th>Title</th>
@@ -43,7 +43,7 @@
 
       <?php
         if (isset($admin)) {
-          echo '<td><a href="/admin/edit_resource?id=' . $r['id'] . '">Edit</a></td>';
+          echo '<td><a href="/admin/edit_resource.php?id=' . $r['id'] . '">Edit</a></td>';
         }
         echo '</tr>';
       }
