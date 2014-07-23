@@ -1,11 +1,10 @@
 <?php
 include '../includes/common.php';
-$page_title = $project_name . ' | Admin | Add Resource';
+$page_title = 'Add Resource';
 $admin = TRUE;
 $action = 'edit';
 
 include '../includes/partials/top.php';
-
 
 if (isset ($_POST['edit'])):
   
@@ -16,17 +15,13 @@ if (isset ($_POST['edit'])):
   $subject_ids = array_keys($attributes['subject_id']);
   $old_subject_ids = resource_subject_ids($id);
   
+  // echo '<br>';
+  // var_dump($subject_ids);
+  // echo '<br>';
 
-
-  echo '<br>';
-  var_dump($subject_ids);
-  echo '<br>';
-
-  echo '<br>';
-  var_dump($old_subject_ids);
-  echo '<br>';
-
-
+  // echo '<br>';
+  // var_dump($old_subject_ids);
+  // echo '<br>';
 
   foreach ($subject_ids as $sid) {
     if (!in_array($sid, $old_subject_ids)) {
@@ -41,10 +36,9 @@ if (isset ($_POST['edit'])):
     }
   }
 
-  echo '<br>';
-  var_dump($delete_subject_ids);
-  echo '<br>';
-
+  // echo '<br>';
+  // var_dump($delete_subject_ids);
+  // echo '<br>';
 
   if (!empty($delete_subject_ids)) {
     remove_resource_subjects($id, $delete_subject_ids, $connection=null);
@@ -68,8 +62,6 @@ if (isset ($_POST['edit'])):
 
 
 
-
-
 <?php
 elseif (isset($_GET['id'])):
   $resource = get_record_by_id('resources', $_GET['id']);
@@ -77,7 +69,7 @@ elseif (isset($_GET['id'])):
 ?>
 
 <div class="row">
-  <h1>Edit resource</h1>
+  <h1><?php echo $page_title; ?></h1>
 </div>
 
 

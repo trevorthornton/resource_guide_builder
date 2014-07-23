@@ -110,7 +110,7 @@
         $q_join = 'LEFT JOIN sources on resources.source_id = sources.id';
         $source_fields = array_keys(valid_attributes('sources'));
         foreach ($source_fields as $field) {
-          $q_select .= ", sources.$field";
+          $q_select .= ", sources.$field AS source_$field";
         }
     }
     
@@ -273,8 +273,9 @@
         'resource_type_id' => 'integer'
       ],
       'sources' => [
-        'name' => 'string',
+        'title' => 'string',
         'url' => 'string',
+        'description' => 'string',
         'slug' => 'string'
       ],
       'subjects' => [
@@ -283,7 +284,8 @@
         'slug' => 'string'
       ],
       'resource_types' => [
-        'name' => 'string',
+        'label' => 'string',
+        'description' => 'string',
         'slug' => 'string'
       ],
       'resources_subjects' => [

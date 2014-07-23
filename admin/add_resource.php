@@ -1,9 +1,9 @@
 <?php
 include '../includes/common.php';
-$page_title = $project_name . ' | Admin | Add Resource';
+$page_title = 'Add Resource';
+$head_title = head_title();
 $admin = TRUE;
 $action = 'add';
-
 include '../includes/partials/top.php';
 
 if (isset ($_POST['add'])):
@@ -12,10 +12,7 @@ if (isset ($_POST['add'])):
 else:
 ?>
 
-
-<div class="row">
-  <h1>Add a resource</h1>
-</div>
+<?php include '../includes/partials/page_head.php'; ?>
 
 
 <div class="row">

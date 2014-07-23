@@ -1,6 +1,6 @@
 <?php
 include '../includes/common.php';
-$page_title = 'EPCOT History | Admin | Add Subject';
+$page_title = "$project_name | Admin | Add Subject";
 include '../includes/partials/top.php';
 include '../includes/partials/admin_nav.php';
 
