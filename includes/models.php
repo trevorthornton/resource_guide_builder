@@ -16,9 +16,9 @@
   }
 
 
+  # ONLY WORKS FOR STRINGS NOW - FIX IT
   function get_record_by_attribute($table, $attribute, $value) {
-    $id = intval($id);
-    $query = "SELECT * FROM $table WHERE id = $id LIMIT 1";
+    $query = "SELECT * FROM $table WHERE $attribute = '$value' LIMIT 1";
     $connection = db_connection();
     if ($result = $connection->query($query)) {
       /* fetch associative array */
@@ -230,21 +230,23 @@
 
 
   // Helpers
-
   function verify_unique($table,$attributes) {
-    $unique_attributes = [
-      'resources' => ['url','isbn','issn'],
-      'subjects' => ['slug'],
-      'sources' => ['slug'],
-      'creators' => ['slug']
-    ];
-    
+    $existing = get_record_by_attribute($table, 'slug', $attributes['slug']);
+    return (is_null($existing)) ? TRUE : FALSE;
   }
 
 
   function check_slug($attributes) {
     if (empty($attributes['slug'])) {
-      $attributes['slug'] = slugify($attributes['label']);
+      if (isset($attributes['label'])) {
+        $attributes['slug'] = slugify($attributes['label']);
+      }
+      elseif (isset($attributes['title'])) {
+        $attributes['slug'] = slugify($attributes['title']);
+      }
+      elseif (isset($attributes['name'])) {
+        $attributes['slug'] = slugify($attributes['name']);
+      }
     }
     else {
       $attributes['slug'] = slugify($attributes['slug']);
@@ -256,7 +258,7 @@
   function slugify($string) {
     $slug = strtolower($string);
     $slug = preg_replace('/[\s\-\_]/', '_', $slug);
-    $slug = preg_replace('/[^\w\_]/', '', $slug);
+    $slug = preg_replace('/[^A-Za-z0-9_]/', '', $slug);
     return $slug;
   }
 
@@ -270,7 +272,8 @@
         'description' => 'string',
         'publication_info' => 'string',
         'source_id' => 'integer',
-        'resource_type_id' => 'integer'
+        'resource_type_id' => 'integer',
+        'slug' => 'string'
       ],
       'sources' => [
         'title' => 'string',

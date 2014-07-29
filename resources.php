@@ -34,7 +34,7 @@ $resources = get_resources();
 </div>
 
 
-<?php var_dump($resources); ?>
+<?php // var_dump($resources); ?>
 
 
 <?php
