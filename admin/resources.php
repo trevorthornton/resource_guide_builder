@@ -3,7 +3,6 @@ include '../includes/common.php';
 $page_title = 'Add Resource';
 $head_title = head_title();
 $admin = TRUE;
-$action = 'add';
 include '../includes/partials/top.php';
 
 if (isset ($_POST['add'])):

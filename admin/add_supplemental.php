@@ -43,7 +43,7 @@ if ($_GET['type']):
     }
     else {
       echo '<div class="row alert-box error">';
-      echo "$type <strong>$label</strong> already exists :(";
+      echo "$type <strong>$label</strong> already exists";
       echo '</div>';
       echo '<div class="row">';
       include '../includes/partials/generic_record_form.php';

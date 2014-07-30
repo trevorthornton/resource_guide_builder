@@ -1,12 +1,12 @@
-<table class="resources-table">
+<table class="resources-table records-table">
   <thead>
     <tr>
-      <th>Title</th>
+      <th class="title-column">Title</th>
       <th>Source</th>
       <th>Author</th>
       <th>Subject</th>
       <?php if (isset($admin)) {
-        echo '<th>Actions</th>';
+        echo '<th class="actions-column">Actions</th>';
       }
       ?>
     </tr>
@@ -16,7 +16,7 @@
     <?php foreach ($resources as $r) { ?>
     <tr>
     
-      <td>
+      <td class="title-column">
       <?php
       if (isset($r['url'])) {
         echo '<a href="' . $r['url'] . '">' . $r['title'] . '</a>';
@@ -43,7 +43,7 @@
 
       <?php
         if (isset($admin)) {
-          echo '<td><a href="/admin/edit_resource.php?id=' . $r['id'] . '">Edit</a></td>';
+          echo '<td class="actions-column"><a href="/admin/edit_resource.php?id=' . $r['id'] . '">Edit</a></td>';
         }
         echo '</tr>';
       }

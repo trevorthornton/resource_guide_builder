@@ -284,7 +284,8 @@
       'subjects' => [
         'label' => 'string',
         'wikipedia_uri' => 'string',
-        'slug' => 'string'
+        'slug' => 'string',
+        'meta_subject_id' => 'integer'
       ],
       'resource_types' => [
         'label' => 'string',

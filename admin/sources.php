@@ -1,22 +1,19 @@
 <?php
 include '../includes/common.php';
-// Page headers, etc.
-$page_title = $project_name . ' | Admin | sources';
+$page_title = 'Sources';
+$head_title = head_title();
+$admin = TRUE;
+$type = 'source';
 include '../includes/partials/top.php';
-$admin = true;
-include '../includes/partials/admin_nav.php';
 ?>
 
 
-<div class="row">
-  <h1>sources</h1>
-</div>
+<?php include '../includes/partials/page_head.php'; ?>
 
 
 <div class="row">  
 <?php
   $records = get_records('sources');
-  $edit_path = '/admin/edit_source.php';
   include '../includes/partials/records_table.php';
 ?>
 </div>

@@ -55,6 +55,19 @@ main {
 table {
   background: transparent;
   margin: 1rem 0;
+  width: 100%;
+}
+
+table .id-column {
+  width: 5%;
+}
+
+table .label-column, table .title-column {
+  width: 35%;
+}
+
+table .description-column {
+  width: 35%;
 }
 
 table tr.even, table tr.alt, table tr:nth-of-type(even), table thead {

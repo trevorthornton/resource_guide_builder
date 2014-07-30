@@ -4,18 +4,16 @@ if (empty($records)) {
 }
 else {
 ?>
-<table>
+<table class="records-table">
   <thead>
     <tr>
       <?php
-      var_dump($records);
-
         foreach (current($records) as $key => $value) {
-          echo '<th>' . $key . '</th>';
+          echo '<th class="' . $key . '-column">' . $key . '</th>';
         }
       ?>
       <?php if (isset($admin)) {
-        echo '<th>Actions</th>';
+        echo '<th class="actions-column">Actions</th>';
       }
       ?>
     </tr>
@@ -26,9 +24,12 @@ else {
     foreach ($records as $r) {
       echo '<tr>';
       foreach ($r as $key => $value) {
-        echo '<td>' . $value . '</td>';
+        echo '<td class="' . $key . '-column">' . $value . '</td>';
       }
-      echo '<td><a href ="' . $edit_path  . "?id=" . $r['id'] . '">Edit</a></td>';
+      
+      $edit_path = "/admin/edit_supplemental.php?type=$type&id=" . $r['id'];
+
+      echo '<td class="actions-column"><a href ="' . $edit_path  . '">Edit</a></td>';
       echo '</tr>';
     }
     ?>

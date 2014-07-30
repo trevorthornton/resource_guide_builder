@@ -9,6 +9,6 @@
     <li><a href="/admin/sources.php">Sources</a></li>
     <li><a href="/admin/add_supplemental.php?type=source">Add Source</a></li>
     <li><a href="/admin/resource_types.php">Resource Types</a></li>
-    <li><a href="/admin/add_supplemental.php?type=resource_type">Resource Types</a></li>
+    <li><a href="/admin/add_supplemental.php?type=resource_type">Add Resource Type</a></li>
   </ul>
 </div>

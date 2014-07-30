@@ -5,7 +5,7 @@
   }
 ?>
 
-<form action="add_supplemental.php?type=<?php echo $type; ?>" method="post">
+<form action="<?php echo $action; ?>_supplemental.php?type=<?php echo $type; ?><?php echo ($action == 'edit') ? "&id=$id" : ''; ?>" method="post">
 
   <?php if (isset($attributes['label'])): ?>
     <div class="row">
@@ -69,7 +69,7 @@
 
   <div class="row">
     <div class="small-12 columns">
-      <input name="add" type="submit" value="Add" class="button" />
+      <input name="<?php echo ($action == 'edit') ? 'update' : 'add'; ?>" type="submit" value="<?php echo ($action == 'edit') ? 'update' : 'add'; ?>" class="button" />
     </div>
   </div>
 

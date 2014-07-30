@@ -1,9 +1,9 @@
 <?php
 include '../includes/common.php';
-$page_title = 'Subjects';
+$page_title = 'Resource types';
 $head_title = head_title();
 $admin = TRUE;
-$type = 'subject';
+$type = 'resource_type';
 include '../includes/partials/top.php';
 ?>
 
@@ -13,7 +13,7 @@ include '../includes/partials/top.php';
 
 <div class="row">  
 <?php
-  $records = get_records('subjects');
+  $records = get_records('resource_types');
   include '../includes/partials/records_table.php';
 ?>
 </div>
